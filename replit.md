@@ -1,18 +1,20 @@
-# [Project name]
+# Phishing URL Detector
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Prototype Streamlit untuk mendeteksi URL yang terindikasi phishing atau legitimate menggunakan model XGBoost yang diunggah pengguna.
 
 ## Run & Operate
 
+- `streamlit run app.py --server.port 5000` — run the Phishing URL Detector
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Model dan extractor berada di `model_assets/`; tidak menggunakan database atau API eksternal.
 
 ## Stack
 
+- Python 3.11, Streamlit, XGBoost, Pandas, NumPy, Joblib
 - pnpm workspaces, Node.js 24, TypeScript 5.9
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
@@ -22,23 +24,30 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `app.py` — antarmuka Streamlit dan alur prediksi
+- `model_assets/feature_extractor.py` — extractor fitur yang diunggah, dipakai tanpa perubahan
+- `model_assets/model_xgboost_7fitur.pkl` — model XGBoost yang diunggah
+- `model_assets/feature_info.json` — metadata dan urutan tujuh fitur
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Fitur diekstrak dari teks URL secara lokal; aplikasi tidak membuka, scraping, atau memanggil URL target.
+- Probabilitas diambil langsung dari `predict_proba` model yang diunggah.
+- Kelas model dipetakan sebagai `0 = Legitimate` dan `1 = Phishing`.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Pengguna memasukkan URL dan menerima label prediksi beserta probabilitas phishing dan legitimate.
+- Tujuh fitur yang digunakan ditampilkan dalam tabel untuk kebutuhan demonstrasi penelitian.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Antarmuka menggunakan bahasa Indonesia.
+- Jangan mengubah logika extractor atau membuat model Machine Learning baru.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- URL dianalisis persis seperti input pengguna; masukkan skema URL jika ingin parsing domain dan deteksi HTTPS bekerja sesuai extractor.
 
 ## Pointers
 

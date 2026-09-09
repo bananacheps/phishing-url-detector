@@ -1,0 +1,14 @@
+{
+    "features": [
+        "url_length",
+        "domain_length",
+        "subdomain_count",
+        "special_char_count",
+        "digit_count",
+        "https_usage",
+        "url_entropy"
+    ],
+    "model": "XGBoost",
+    "number_of_features": 7,
+    "random_state": 42
+}
