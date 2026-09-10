@@ -36,6 +36,22 @@ FEATURE_DESCRIPTIONS = {
     "url_entropy": "Ukuran keragaman karakter pada URL.",
 }
 
+FINAL_TEST_CASES = [
+    {"url": "http://110.37.75.243:55976/i", "ground_truth": "Phishing"},
+    {"url": "https://smartinsights.com", "ground_truth": "Legitimate"},
+    {"url": "http://119.180.11.199:38087/i", "ground_truth": "Phishing"},
+    {"url": "https://al.com", "ground_truth": "Legitimate"},
+    {
+        "url": "https://cipher.auth0rtoki1l.ru/oy3wo8fm",
+        "ground_truth": "Phishing",
+    },
+    {"url": "https://sb-cd.com", "ground_truth": "Legitimate"},
+    {"url": "http://195.178.110.250/a-r.m-6.Sakura", "ground_truth": "Phishing"},
+    {"url": "https://kayatan.org", "ground_truth": "Legitimate"},
+    {"url": "https://awmcdn.net", "ground_truth": "Legitimate"},
+    {"url": "http://182.121.253.20:50869/i", "ground_truth": "Phishing"},
+]
+
 
 @st.cache_resource
 def load_model():
@@ -108,6 +124,33 @@ def predict_url(url: str, feature_names: list[str]) -> tuple[int, float, float, 
         legitimate_probability,
         make_feature_table(feature_names, feature_values),
     )
+
+
+def run_final_test(feature_names: list[str]) -> pd.DataFrame:
+    results = []
+    for number, test_case in enumerate(FINAL_TEST_CASES, start=1):
+        prediction, phishing_probability, legitimate_probability, _ = predict_url(
+            test_case["url"],
+            feature_names,
+        )
+        predicted_label = "Phishing" if prediction == 1 else "Legitimate"
+        results.append(
+            {
+                "No": number,
+                "URL": test_case["url"],
+                "Ground Truth": test_case["ground_truth"],
+                "Prediksi Model": predicted_label,
+                "Prob. Phishing": f"{phishing_probability:.2%}",
+                "Prob. Legitimate": f"{legitimate_probability:.2%}",
+                "Status": (
+                    "BENAR"
+                    if predicted_label == test_case["ground_truth"]
+                    else "SALAH"
+                ),
+            }
+        )
+
+    return pd.DataFrame(results)
 
 
 def render_result(
@@ -216,6 +259,59 @@ def main() -> None:
                     )
                 except Exception as error:
                     st.error(f"Analisis tidak dapat dilakukan: {error}")
+
+    st.divider()
+    st.subheader("Pengujian Konsistensi Final Test")
+    st.write(
+        "Jalankan sepuluh sampel final test menggunakan model dan feature extractor "
+        "yang sama. URL hanya diproses sebagai string dan tidak diakses."
+    )
+
+    if st.button("Jalankan 10 Pengujian Final Test"):
+        with st.spinner("Menjalankan 10 pengujian final test..."):
+            try:
+                final_test_results = run_final_test(feature_names)
+            except Exception as error:
+                st.error(f"Pengujian final test tidak dapat dilakukan: {error}")
+            else:
+                st.dataframe(
+                    final_test_results,
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "No": st.column_config.NumberColumn("No", width="small"),
+                        "URL": st.column_config.TextColumn("URL"),
+                        "Ground Truth": st.column_config.TextColumn("Ground Truth"),
+                        "Prediksi Model": st.column_config.TextColumn("Prediksi Model"),
+                        "Prob. Phishing": st.column_config.TextColumn("Prob. Phishing"),
+                        "Prob. Legitimate": st.column_config.TextColumn(
+                            "Prob. Legitimate"
+                        ),
+                        "Status": st.column_config.TextColumn("Status"),
+                    },
+                )
+
+                correct_count = int((final_test_results["Status"] == "BENAR").sum())
+                incorrect_count = len(final_test_results) - correct_count
+                consistency_percentage = correct_count / len(final_test_results) * 100
+
+                summary_columns = st.columns(3)
+                with summary_columns[0]:
+                    st.metric("Jumlah pengujian", len(final_test_results))
+                with summary_columns[1]:
+                    st.metric("Prediksi benar", correct_count)
+                with summary_columns[2]:
+                    st.metric("Prediksi salah", incorrect_count)
+
+                st.metric(
+                    "Persentase konsistensi pengujian 10 sampel",
+                    f"{consistency_percentage:.2f}%",
+                )
+                st.caption(
+                    "Sampel pengujian berasal dari final test set penelitian. "
+                    "Ground truth berasal dari label dataset. Pengujian aplikasi "
+                    "tidak melakukan akses terhadap URL tujuan."
+                )
 
     st.divider()
     st.subheader("Informasi Model")

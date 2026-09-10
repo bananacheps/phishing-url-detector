@@ -1,0 +1,139 @@
+FINAL TEST — JANGAN MELAKUKAN PERUBAHAN PADA MODEL
+
+Kita sekarang melakukan pengujian konsistensi model dan aplikasi menggunakan 10 sampel yang berasal dari FINAL TEST SET penelitian.
+
+Tolong buat satu bagian/fitur sederhana pada aplikasi yang memungkinkan saya menjalankan seluruh 10 URL pengujian ini sekaligus menggunakan model dan feature extractor yang SUDAH ADA.
+
+ATURAN SANGAT KETAT:
+
+1. JANGAN mengubah model_xgboost_7fitur.pkl.
+2. JANGAN mengubah feature_extractor.py.
+3. JANGAN mengubah feature_info.json.
+4. JANGAN mengubah 7 fitur.
+5. JANGAN melatih model baru.
+6. JANGAN melakukan retraining.
+7. JANGAN mengubah parameter XGBoost.
+8. JANGAN membuat model baru.
+9. JANGAN mengakses/membuka URL tujuan.
+10. Jangan melakukan scraping, crawling, scanning, atau request HTTP ke URL pengujian.
+11. URL hanya diproses sebagai string oleh feature extractor.
+12. Gunakan pipeline prediksi yang SAMA dengan fitur Analisis URL yang sudah berjalan.
+13. Jangan publish/deploy.
+14. Jangan mengubah bagian UI yang sudah ada kecuali menambahkan bagian pengujian ini.
+15. Jangan menghapus fitur aplikasi yang sudah ada.
+
+TUJUAN:
+Tambahkan bagian:
+"Pengujian Konsistensi Final Test"
+
+Berikan tombol:
+"Jalankan 10 Pengujian Final Test"
+
+Ketika tombol ditekan, aplikasi harus:
+- mengekstrak 7 fitur dari setiap URL menggunakan feature_extractor.py yang sekarang;
+- menggunakan model_xgboost_7fitur.pkl yang sekarang;
+- menghasilkan prediksi;
+- menghasilkan probabilitas phishing;
+- menghasilkan probabilitas legitimate;
+- membandingkan prediksi dengan Ground Truth;
+- menentukan status BENAR atau SALAH.
+
+10 DATA PENGUJIAN:
+
+1.
+URL:
+http://110.37.75.243:55976/i
+Ground Truth:
+Phishing
+
+2.
+URL:
+https://smartinsights.com
+Ground Truth:
+Legitimate
+
+3.
+URL:
+http://119.180.11.199:38087/i
+Ground Truth:
+Phishing
+
+4.
+URL:
+https://al.com
+Ground Truth:
+Legitimate
+
+5.
+URL:
+https://cipher.auth0rtoki1l.ru/oy3wo8fm
+Ground Truth:
+Phishing
+
+6.
+URL:
+https://sb-cd.com
+Ground Truth:
+Legitimate
+
+7.
+URL:
+http://195.178.110.250/a-r.m-6.Sakura
+Ground Truth:
+Phishing
+
+8.
+URL:
+https://kayatan.org
+Ground Truth:
+Legitimate
+
+9.
+URL:
+https://awmcdn.net
+Ground Truth:
+Legitimate
+
+10.
+URL:
+http://182.121.253.20:50869/i
+Ground Truth:
+Phishing
+
+TABEL HASIL:
+
+Tampilkan tabel:
+
+No | URL | Ground Truth | Prediksi Model | Prob. Phishing | Prob. Legitimate | Status
+
+Status:
+- BENAR jika prediksi sama dengan Ground Truth
+- SALAH jika berbeda
+
+Tambahkan ringkasan:
+
+Jumlah pengujian: 10
+Prediksi benar: X
+Prediksi salah: X
+Persentase konsistensi: X%
+
+PENTING:
+Persentase ini disebut "persentase keberhasilan/konsistensi pengujian 10 sampel", BUKAN akurasi keseluruhan model penelitian.
+
+Tambahkan catatan:
+
+"Sampel pengujian berasal dari final test set penelitian. Ground truth berasal dari label dataset. Pengujian aplikasi tidak melakukan akses terhadap URL tujuan."
+
+Setelah implementasi:
+1. Jalankan aplikasi.
+2. Pastikan model berhasil dimuat.
+3. Jalankan 10 pengujian.
+4. Pastikan tidak ada error.
+5. Pastikan feature extractor tetap digunakan.
+6. Pastikan model tetap model_xgboost_7fitur.pkl.
+7. Laporkan file yang berubah.
+8. Pastikan model_xgboost_7fitur.pkl, feature_extractor.py, dan feature_info.json TIDAK berubah.
+
+JANGAN melakukan pekerjaan lain.
+JANGAN menambahkan fitur tambahan.
+JANGAN publish.
