@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from urllib.parse import urlparse
 
 import joblib
 import pandas as pd
@@ -23,6 +24,16 @@ FEATURE_LABELS = {
     "digit_count": "Digit Count",
     "https_usage": "HTTPS Usage",
     "url_entropy": "URL Entropy",
+}
+
+FEATURE_DESCRIPTIONS = {
+    "url_length": "Jumlah seluruh karakter pada URL.",
+    "domain_length": "Jumlah karakter pada bagian domain URL.",
+    "subdomain_count": "Jumlah subdomain yang terdeteksi.",
+    "special_char_count": "Jumlah karakter non-alfanumerik pada URL.",
+    "digit_count": "Jumlah angka yang terdapat pada URL.",
+    "https_usage": "1 jika URL menggunakan HTTPS, 0 jika tidak.",
+    "url_entropy": "Ukuran keragaman karakter pada URL.",
 }
 
 
@@ -52,8 +63,26 @@ def make_feature_table(feature_names: list[str], feature_values: list[float]) ->
         {
             "Fitur": [FEATURE_LABELS[name] for name in feature_names],
             "Nilai": feature_values,
+            "Penjelasan": [FEATURE_DESCRIPTIONS[name] for name in feature_names],
         }
     )
+
+
+def validate_url(url: str) -> str | None:
+    if not url.strip():
+        return "Masukkan URL terlebih dahulu."
+
+    if any(character.isspace() for character in url):
+        return "URL tidak valid karena mengandung spasi."
+
+    parsed = urlparse(url)
+    if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
+        return (
+            "URL tidak valid. Gunakan format lengkap, misalnya "
+            "https://www.robobricklab.com/"
+        )
+
+    return None
 
 
 def predict_url(url: str, feature_names: list[str]) -> tuple[int, float, float, pd.DataFrame]:
@@ -90,9 +119,9 @@ def render_result(
     st.subheader("Hasil Analisis")
 
     if prediction == 1:
-        st.error("Terindikasi Phishing")
+        st.error("TERINDIKASI PHISHING")
     else:
-        st.success("Terindikasi Legitimate")
+        st.success("TERINDIKASI LEGITIMATE")
 
     probability_columns = st.columns(2)
     with probability_columns[0]:
@@ -100,7 +129,11 @@ def render_result(
     with probability_columns[1]:
         st.metric("Probabilitas Legitimate", f"{legitimate_probability:.2%}")
 
-    st.subheader("Tujuh Fitur yang Digunakan")
+    st.caption(
+        f"Prediksi model: {'TERINDIKASI PHISHING' if prediction == 1 else 'TERINDIKASI LEGITIMATE'}"
+    )
+
+    st.subheader("Karakteristik URL yang Dianalisis")
     st.dataframe(
         feature_table,
         use_container_width=True,
@@ -108,6 +141,7 @@ def render_result(
         column_config={
             "Fitur": st.column_config.TextColumn("Fitur"),
             "Nilai": st.column_config.NumberColumn("Nilai", format="%.6f"),
+            "Penjelasan": st.column_config.TextColumn("Penjelasan"),
         },
     )
 
@@ -119,14 +153,33 @@ def main() -> None:
     )
 
     st.title("Phishing URL Detector")
+    st.subheader("Prototype Sistem Keamanan Website Edukasi Berbasis Machine Learning")
+    st.caption("Prototype Penelitian – Studi Kasus Robobrick Lab")
+
+    st.divider()
+    st.subheader("Informasi Penelitian")
+    research_columns = st.columns(4)
+    research_items = [
+        ("Studi Kasus", "Robobrick Lab, Medan"),
+        ("Metode", "XGBoost"),
+        ("Analisis", "URL-based phishing detection"),
+        ("Fitur", "7 karakteristik URL"),
+    ]
+    for column, (label, value) in zip(research_columns, research_items):
+        with column:
+            st.markdown(f"**{label}**")
+            st.write(value)
+
+    st.divider()
+    st.subheader("Analisis URL")
     st.write(
-        "Prototype penelitian untuk menganalisis karakteristik URL menggunakan "
-        "model Machine Learning XGBoost."
+        "Masukkan URL lengkap untuk menganalisis karakteristiknya secara lokal. "
+        "Aplikasi tidak membuka atau mengakses website tujuan."
     )
 
     st.info(
-        "Masukkan URL lengkap, termasuk `http://` atau `https://`, agar karakteristik "
-        "URL dapat dianalisis sesuai dengan extractor penelitian."
+        "Gunakan URL dengan skema `http://` atau `https://` agar parsing domain "
+        "dan deteksi HTTPS mengikuti extractor penelitian."
     )
 
     try:
@@ -139,20 +192,21 @@ def main() -> None:
 
     with st.form("url_analysis_form"):
         url = st.text_input(
-            "URL yang akan dianalisis",
-            placeholder="https://contoh.com/login",
-            help="Sistem menganalisis teks URL yang dimasukkan tanpa mengakses website tersebut.",
+            "Masukkan URL yang akan dianalisis",
+            placeholder="Contoh: https://www.robobricklab.com/",
+            help="Sistem hanya menganalisis teks URL dan tidak mengakses website tersebut.",
         )
         submitted = st.form_submit_button("Analisis URL", type="primary")
 
     if submitted:
-        if not url.strip():
-            st.warning("Masukkan URL terlebih dahulu.")
+        validation_error = validate_url(url)
+        if validation_error:
+            st.warning(validation_error)
         else:
             with st.spinner("Menganalisis karakteristik URL..."):
                 try:
                     prediction, phishing_probability, legitimate_probability, feature_table = (
-                        predict_url(url, feature_names)
+                        predict_url(url.strip(), feature_names)
                     )
                     render_result(
                         prediction,
@@ -163,15 +217,26 @@ def main() -> None:
                 except Exception as error:
                     st.error(f"Analisis tidak dapat dilakukan: {error}")
 
-    with st.expander("Informasi Model"):
-        st.write(f"Model: {feature_info.get('model', 'Tidak tersedia')}")
-        st.write(f"Jumlah fitur: {feature_info.get('number_of_features', len(feature_names))}")
-        st.write("Extractor dan urutan fitur mengikuti file penelitian yang diunggah.")
+    st.divider()
+    st.subheader("Informasi Model")
+    model_columns = st.columns(4)
+    model_items = [
+        ("Model Machine Learning", feature_info.get("model", "XGBoost")),
+        ("Jumlah Fitur", str(feature_info.get("number_of_features", len(feature_names)))),
+        ("Jenis Analisis", "URL-based"),
+        ("Feature Extractor", "feature_extractor.py"),
+    ]
+    for column, (label, value) in zip(model_columns, model_items):
+        with column:
+            st.markdown(f"**{label}**")
+            st.write(value)
 
+    st.divider()
     st.warning(
-        "Peringatan: sistem ini hanya menganalisis karakteristik URL. Hasil prediksi "
-        "bukan jaminan mutlak bahwa sebuah website aman atau berbahaya. Jangan "
-        "membuka URL mencurigakan hanya berdasarkan hasil aplikasi ini."
+        "Catatan: Sistem ini hanya menganalisis karakteristik URL menggunakan 7 fitur "
+        "yang telah ditentukan. Hasil prediksi merupakan indikasi berbasis model "
+        "Machine Learning dan bukan jaminan mutlak bahwa suatu website aman atau "
+        "berbahaya. Jangan membuka URL mencurigakan hanya berdasarkan hasil aplikasi ini."
     )
 
 

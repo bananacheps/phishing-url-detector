@@ -1,0 +1,181 @@
+Kita akan melakukan FINAL POLISH untuk prototype penelitian yang sudah berjalan.
+
+JUDUL:
+Phishing URL Detector
+
+KONTEKS:
+Aplikasi ini merupakan prototype penelitian:
+“Pengembangan Sistem Keamanan Website Edukasi Robotika Menggunakan Machine Learning untuk Deteksi URL Phishing.”
+
+Studi kasus:
+Robobrick Lab, Medan.
+
+TUJUAN PERUBAHAN:
+Rapikan dan tingkatkan tampilan aplikasi agar siap digunakan untuk demonstrasi dan pengujian fungsional bersama pihak Robobrick Lab.
+
+ATURAN SANGAT PENTING:
+
+1. JANGAN mengubah model machine learning.
+2. JANGAN mengubah file model_xgboost_7fitur.pkl atau file model .pkl apa pun.
+3. JANGAN mengubah feature_extractor.py.
+4. JANGAN mengubah feature_info.json.
+5. JANGAN mengubah logika ekstraksi 7 fitur.
+6. JANGAN mengubah urutan 7 fitur.
+7. JANGAN melatih model baru.
+8. JANGAN mengganti XGBoost.
+9. JANGAN menambahkan database.
+10. JANGAN menambahkan login.
+11. JANGAN menambahkan API eksternal.
+12. JANGAN melakukan scraping.
+13. JANGAN melakukan penetration testing.
+14. JANGAN melakukan request otomatis ke website yang dianalisis.
+15. Input tetap berupa URL dan sistem hanya menganalisis karakteristik URL.
+16. Tetap gunakan model dan extractor yang sekarang sudah terbukti berjalan.
+17. Jangan mengubah hasil prediksi yang sekarang.
+
+PERUBAHAN UI YANG DIINGINKAN:
+
+A. HEADER
+Buat header profesional:
+
+“Phishing URL Detector”
+
+Subjudul:
+“Prototype Sistem Keamanan Website Edukasi Berbasis Machine Learning”
+
+Tambahkan label:
+“Prototype Penelitian – Studi Kasus Robobrick Lab”
+
+Jangan gunakan logo Robobrick karena belum ada file logo yang diberikan.
+
+B. INFORMASI PENELITIAN
+Tambahkan bagian kecil:
+
+“Studi Kasus”
+Robobrick Lab, Medan
+
+“Metode”
+XGBoost
+
+“Analisis”
+URL-based phishing detection
+
+“Fitur”
+7 karakteristik URL
+
+C. INPUT URL
+Tetap gunakan input URL yang sekarang.
+
+Label:
+“Masukkan URL yang akan dianalisis”
+
+Placeholder:
+“Contoh: https://www.robobricklab.com/”
+
+Tombol:
+“Analisis URL”
+
+D. HASIL
+Buat hasil analisis sangat jelas.
+
+Jika prediksi phishing:
+“TERINDIKASI PHISHING”
+
+Jika legitimate:
+“TERINDIKASI LEGITIMATE”
+
+Tampilkan:
+- Probabilitas Phishing
+- Probabilitas Legitimate
+- Prediksi model
+
+Jangan mengatakan bahwa website tersebut pasti aman atau pasti berbahaya.
+
+Gunakan istilah “terindikasi”, bukan “pasti”.
+
+E. TUJUH FITUR
+Tampilkan bagian:
+
+“Karakteristik URL yang Dianalisis”
+
+Dengan 7 fitur:
+
+1. URL Length
+2. Domain Length
+3. Subdomain Count
+4. Special Character Count
+5. Digit Count
+6. HTTPS Usage
+7. URL Entropy
+
+Tampilkan nilai aktual hasil ekstraksi untuk URL yang sedang dianalisis.
+
+Tambahkan penjelasan singkat masing-masing fitur jika memungkinkan, tetapi jangan mengubah perhitungan fitur.
+
+F. INFORMASI MODEL
+Tambahkan:
+
+“Model Machine Learning”
+XGBoost
+
+“Jumlah Fitur”
+7
+
+“Jenis Analisis”
+URL-based
+
+“Feature Extractor”
+feature_extractor.py
+
+G. DISCLAIMER
+Pertahankan disclaimer dan buat lebih jelas:
+
+“Catatan:
+Sistem ini hanya menganalisis karakteristik URL menggunakan 7 fitur yang telah ditentukan. Hasil prediksi merupakan indikasi berbasis model Machine Learning dan bukan jaminan mutlak bahwa suatu website aman atau berbahaya. Jangan membuka URL mencurigakan hanya berdasarkan hasil aplikasi ini.”
+
+H. DESAIN
+Gunakan desain:
+- profesional
+- bersih
+- sederhana
+- cocok untuk demo penelitian
+- responsive
+- mudah dibaca
+- tidak terlalu banyak warna
+- tidak menggunakan animasi berat
+
+I. ERROR HANDLING
+Pastikan aplikasi menangani:
+- input kosong
+- URL tidak valid
+- format URL yang tidak dapat diproses
+
+Tampilkan pesan error yang ramah pengguna.
+
+J. TESTING
+Setelah perubahan selesai:
+1. Jalankan aplikasi.
+2. Pastikan Streamlit berjalan.
+3. Pastikan model dapat dimuat.
+4. Pastikan feature extractor dapat digunakan.
+5. Test menggunakan:
+   https://www.google.com
+6. Test menggunakan:
+   https://www.robobricklab.com/
+7. Test menggunakan URL mencurigakan yang sebelumnya sudah berhasil diuji.
+
+Bandingkan hasil dengan perilaku aplikasi sebelum perubahan UI.
+
+JANGAN mengubah model atau feature extraction hanya agar hasil test terlihat bagus.
+
+K. VERIFIKASI FILE
+Setelah selesai, laporkan:
+- file apa saja yang diubah
+- file apa saja yang tidak diubah
+- pastikan model_xgboost_7fitur.pkl tidak berubah
+- pastikan feature_extractor.py tidak berubah
+- pastikan feature_info.json tidak berubah
+- hasil testing aplikasi
+
+JANGAN publish/deploy aplikasi dulu.
+Cukup pastikan Preview berjalan dengan baik.
